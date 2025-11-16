@@ -4106,6 +4106,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "meilisearch-quota"
+version = "1.26.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror 2.0.16",
+ "time",
+ "tracing",
+]
+
+[[package]]
 name = "meilisearch-types"
 version = "1.26.0"
 dependencies = [

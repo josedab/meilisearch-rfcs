@@ -1,0 +1,20 @@
+[package]
+name = "meilisearch-quota"
+publish = false
+
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+homepage.workspace = true
+readme.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = { version = "1.0.140", features = ["preserve_order"] }
+thiserror = "2.0.12"
+tracing = "0.1"
+time = { version = "0.3.41", features = ["serde-well-known", "formatting", "parsing", "macros"] }
+
+[dev-dependencies]
