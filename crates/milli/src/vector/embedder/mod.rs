@@ -4,6 +4,7 @@ pub mod manual;
 pub mod ollama;
 pub mod openai;
 pub mod rest;
+pub mod splade;
 
 use std::num::NonZeroUsize;
 use std::sync::Mutex;
@@ -33,6 +34,8 @@ pub enum Embedder {
     Rest(rest::Embedder),
     /// An embedder composed of an embedder at search time and an embedder at indexing time.
     Composite(composite::Embedder),
+    /// An embedder based on SPLADE (Sparse Lexical and Expansion Model) for learned sparse representations.
+    Splade(splade::Embedder),
 }
 
 /// Configuration for an embedder.
@@ -73,6 +76,7 @@ pub enum EmbedderOptions {
     UserProvided(manual::EmbedderOptions),
     Rest(rest::EmbedderOptions),
     Composite(composite::EmbedderOptions),
+    Splade(splade::EmbedderOptions),
 }
 
 impl EmbedderOptions {
@@ -81,7 +85,8 @@ impl EmbedderOptions {
             EmbedderOptions::HuggingFace(_)
             | EmbedderOptions::OpenAi(_)
             | EmbedderOptions::Ollama(_)
-            | EmbedderOptions::UserProvided(_) => None,
+            | EmbedderOptions::UserProvided(_)
+            | EmbedderOptions::Splade(_) => None,
             EmbedderOptions::Rest(embedder_options) => {
                 embedder_options.indexing_fragments.get(name)
             }
@@ -100,7 +105,8 @@ impl EmbedderOptions {
             EmbedderOptions::HuggingFace(_)
             | EmbedderOptions::OpenAi(_)
             | EmbedderOptions::Ollama(_)
-            | EmbedderOptions::UserProvided(_) => false,
+            | EmbedderOptions::UserProvided(_)
+            | EmbedderOptions::Splade(_) => false,
             EmbedderOptions::Rest(embedder_options) => {
                 !embedder_options.indexing_fragments.is_empty()
             }
@@ -147,6 +153,9 @@ impl Embedder {
             )?),
             EmbedderOptions::Composite(options) => {
                 Self::Composite(composite::Embedder::new(options, cache_cap)?)
+            }
+            EmbedderOptions::Splade(options) => {
+                Self::Splade(splade::Embedder::new(options, cache_cap)?)
             }
         })
     }

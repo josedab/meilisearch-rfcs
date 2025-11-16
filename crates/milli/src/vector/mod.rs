@@ -9,6 +9,8 @@ pub mod parsed_vectors;
 mod runtime;
 pub mod session;
 pub mod settings;
+pub mod splade;
+pub mod splade_training;
 mod store;
 
 pub use self::error::Error;
@@ -19,6 +21,7 @@ pub use distribution::DistributionShift;
 pub use embedder::{Embedder, EmbedderOptions, EmbeddingConfig, SearchQuery};
 pub use embeddings::Embeddings;
 pub use runtime::{RuntimeEmbedder, RuntimeEmbedders, RuntimeFragment};
+pub use splade::SpladeVector;
 pub use store::{VectorStore, VectorStoreBackend, VectorStoreStats};
 
 pub const REQUEST_PARALLELISM: usize = 40;
