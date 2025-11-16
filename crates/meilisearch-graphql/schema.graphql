@@ -1,0 +1,276 @@
+# GraphQL Schema for Meilisearch API
+
+scalar JSON
+scalar DateTime
+
+# Root types
+type Query {
+  index(uid: String!): Index
+  indexes(offset: Int, limit: Int): IndexConnection!
+  federatedSearch(queries: [FederatedQueryInput!]!, limit: Int): FederatedSearchResult!
+  task(uid: Int!): Task
+  tasks(filter: TaskFilterInput, limit: Int, offset: Int): TaskConnection!
+  stats: Stats!
+  health: Health!
+}
+
+type Mutation {
+  createIndex(uid: String!, primaryKey: String): IndexCreationTask!
+  addDocuments(indexUid: String!, documents: [JSON!]!, primaryKey: String): DocumentTask!
+  updateSettings(indexUid: String!, settings: SettingsInput!): SettingsTask!
+  deleteDocuments(indexUid: String!, documentIds: [String!]!): DocumentTask!
+  deleteIndex(uid: String!): IndexDeletionTask!
+}
+
+type Subscription {
+  searchStream(indexUid: String!, query: String, limit: Int): SearchResult!
+  taskUpdates(taskUid: Int, indexUid: String): Task!
+  indexStatsStream(indexUid: String!): IndexStats!
+}
+
+# Index types
+type Index {
+  uid: String!
+  primaryKey: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  stats: IndexStats!
+  settings: Settings!
+  search(
+    query: String
+    filter: String
+    facets: [String!]
+    limit: Int
+    offset: Int
+    attributesToRetrieve: [String!]
+    attributesToHighlight: [String!]
+    highlightPreTag: String
+    highlightPostTag: String
+    sort: [String!]
+  ): SearchResult!
+}
+
+type IndexConnection {
+  results: [Index!]!
+  offset: Int!
+  limit: Int!
+  total: Int!
+}
+
+type IndexStats {
+  numberOfDocuments: Int!
+  isIndexing: Boolean!
+  fieldDistribution: JSON!
+}
+
+type Settings {
+  displayedAttributes: [String!]
+  searchableAttributes: [String!]
+  filterableAttributes: [String!]
+  sortableAttributes: [String!]
+  rankingRules: [String!]
+  stopWords: [String!]
+  synonyms: JSON
+  distinctAttribute: String
+  typoTolerance: TypoTolerance
+  faceting: Faceting
+  pagination: Pagination
+}
+
+type TypoTolerance {
+  enabled: Boolean!
+  minWordSizeForTypos: MinWordSizeForTypos
+  disableOnWords: [String!]
+  disableOnAttributes: [String!]
+}
+
+type MinWordSizeForTypos {
+  oneTypo: Int
+  twoTypos: Int
+}
+
+type Faceting {
+  maxValuesPerFacet: Int
+}
+
+type Pagination {
+  maxTotalHits: Int
+}
+
+# Search types
+type SearchResult {
+  hits: [SearchHit!]!
+  estimatedTotalHits: Int!
+  processingTimeMs: Int!
+  query: String!
+  limit: Int!
+  offset: Int!
+  facetDistribution: FacetDistribution
+}
+
+type SearchHit {
+  id: String!
+  fields: JSON!
+  formatted: JSON
+  rankingScore: Float
+}
+
+type FacetDistribution {
+  facets: [Facet!]!
+}
+
+type Facet {
+  name: String!
+  values: [FacetValue!]!
+}
+
+type FacetValue {
+  value: String!
+  count: Int!
+}
+
+# Federated search types
+type FederatedSearchResult {
+  hits: [FederatedHit!]!
+  processingTimeMs: Int!
+  limit: Int!
+}
+
+type FederatedHit {
+  indexUid: String!
+  document: SearchHit!
+  rankingScore: Float
+}
+
+input FederatedQueryInput {
+  indexUid: String!
+  query: String
+  filter: String
+  limit: Int
+  weight: Float
+}
+
+# Task types
+type Task {
+  uid: Int!
+  indexUid: String
+  status: TaskStatus!
+  type: TaskType!
+  details: JSON
+  error: TaskError
+  duration: String
+  enqueuedAt: DateTime!
+  startedAt: DateTime
+  finishedAt: DateTime
+}
+
+enum TaskStatus {
+  ENQUEUED
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
+
+enum TaskType {
+  INDEX_CREATION
+  INDEX_UPDATE
+  INDEX_DELETION
+  DOCUMENT_ADDITION
+  DOCUMENT_DELETION
+  SETTINGS_UPDATE
+  DUMP_CREATION
+}
+
+type TaskError {
+  message: String!
+  code: String!
+  type: String!
+  link: String!
+}
+
+type TaskConnection {
+  results: [Task!]!
+  offset: Int!
+  limit: Int!
+  total: Int!
+}
+
+input TaskFilterInput {
+  uids: [Int!]
+  statuses: [TaskStatus!]
+  types: [TaskType!]
+  indexUids: [String!]
+}
+
+# Task result types
+type IndexCreationTask {
+  taskUid: Int!
+  indexUid: String!
+  enqueuedAt: DateTime!
+}
+
+type DocumentTask {
+  taskUid: Int!
+  indexUid: String!
+  enqueuedAt: DateTime!
+}
+
+type SettingsTask {
+  taskUid: Int!
+  indexUid: String!
+  enqueuedAt: DateTime!
+}
+
+type IndexDeletionTask {
+  taskUid: Int!
+  indexUid: String!
+  enqueuedAt: DateTime!
+}
+
+# Settings input types
+input SettingsInput {
+  displayedAttributes: [String!]
+  searchableAttributes: [String!]
+  filterableAttributes: [String!]
+  sortableAttributes: [String!]
+  rankingRules: [String!]
+  stopWords: [String!]
+  synonyms: JSON
+  distinctAttribute: String
+  typoTolerance: TypoToleranceInput
+  faceting: FacetingInput
+  pagination: PaginationInput
+}
+
+input TypoToleranceInput {
+  enabled: Boolean
+  minWordSizeForTypos: MinWordSizeForTyposInput
+  disableOnWords: [String!]
+  disableOnAttributes: [String!]
+}
+
+input MinWordSizeForTyposInput {
+  oneTypo: Int
+  twoTypos: Int
+}
+
+input FacetingInput {
+  maxValuesPerFacet: Int
+}
+
+input PaginationInput {
+  maxTotalHits: Int
+}
+
+# Stats types
+type Stats {
+  databaseSize: Int!
+  lastUpdate: DateTime
+  indexes: JSON!
+}
+
+# Health types
+type Health {
+  status: String!
+}

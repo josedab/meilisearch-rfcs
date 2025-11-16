@@ -1,0 +1,33 @@
+[package]
+name = "meilisearch-graphql"
+publish = false
+
+version.workspace = true
+authors.workspace = true
+description = "GraphQL API layer for Meilisearch"
+homepage.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+actix-web = "4.11.0"
+actix-web-lab = "0.24.1"
+async-graphql = { version = "7.0.14", features = ["time", "uuid"] }
+async-graphql-actix-web = "7.0.14"
+index-scheduler = { path = "../index-scheduler" }
+meilisearch-types = { path = "../meilisearch-types" }
+meilisearch-auth = { path = "../meilisearch-auth" }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = { version = "1.0.140", features = ["preserve_order"] }
+tokio = { version = "1.45.1", features = ["full"] }
+tokio-stream = "0.1.17"
+futures-util = "0.3.31"
+tracing = "0.1.41"
+thiserror = "2.0.12"
+deserr = "0.6.3"
+time = "0.3.41"
+uuid = { version = "1.18.0", features = ["serde", "v4"] }
+
+[dev-dependencies]
+actix-rt = "2.10.0"
+insta = "=1.39.0"

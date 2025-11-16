@@ -687,6 +687,7 @@ pub fn configure_data(config: &mut web::ServiceConfig, services: ServicesData, o
         logs_route_handle,
         logs_stderr_handle,
         analytics,
+        graphql_schema,
     } = services;
 
     let http_payload_size_limit = opt.http_payload_size_limit.as_u64() as usize;
@@ -698,6 +699,7 @@ pub fn configure_data(config: &mut web::ServiceConfig, services: ServicesData, o
         .app_data(personalization_service)
         .app_data(logs_route_handle)
         .app_data(logs_stderr_handle)
+        .app_data(graphql_schema)
         .app_data(web::Data::new(opt.clone()))
         .app_data(
             web::JsonConfig::default()
@@ -768,4 +770,5 @@ pub struct ServicesData {
     pub logs_route_handle: Data<LogRouteHandle>,
     pub logs_stderr_handle: Data<LogStderrHandle>,
     pub analytics: Data<Analytics>,
+    pub graphql_schema: Data<meilisearch_graphql::GraphQLSchema>,
 }

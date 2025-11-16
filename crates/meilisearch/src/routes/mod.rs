@@ -62,6 +62,7 @@ mod dump;
 mod export;
 mod export_analytics;
 pub mod features;
+pub mod graphql;
 pub mod indexes;
 mod logs;
 mod metrics;
@@ -127,7 +128,8 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
         .service(web::scope("/network").configure(network::configure))
         .service(web::scope("/export").configure(export::configure))
         .service(web::scope("/chats").configure(chats::configure))
-        .service(web::scope("/webhooks").configure(webhooks::configure));
+        .service(web::scope("/webhooks").configure(webhooks::configure))
+        .configure(graphql::configure);
 
     #[cfg(feature = "swagger")]
     {

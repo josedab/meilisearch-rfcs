@@ -177,6 +177,11 @@ async fn run_http(
     let logs_route_handle = Data::new(logs_route_handle);
     let logs_stderr_handle = Data::new(logs_stderr_handle);
 
+    // Initialize GraphQL schema
+    let graphql_schema = Data::new(meilisearch::routes::graphql::init_graphql_schema(
+        index_scheduler.clone().into_inner(),
+    ));
+
     let services = ServicesData {
         index_scheduler,
         auth,
@@ -185,6 +190,7 @@ async fn run_http(
         logs_route_handle,
         logs_stderr_handle,
         analytics,
+        graphql_schema,
     };
 
     let http_server =
