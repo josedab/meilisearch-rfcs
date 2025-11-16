@@ -120,6 +120,8 @@ twox-hash = { version = "2.1.1", default-features = false, features = [
 ] }
 geo-types = "0.7.16"
 zerometry = "0.3.0"
+sysinfo = "0.32.1"
+num_cpus = "1.16.0"
 
 [dev-dependencies]
 mimalloc = { version = "0.1.47", default-features = false }
@@ -174,3 +176,6 @@ turkish = ["charabia/turkish"]
 
 # allow CUDA support, see <https://github.com/meilisearch/meilisearch/issues/4306>
 cuda = ["candle-core/cuda"]
+
+# allow Metal support for Apple Silicon GPU acceleration (RFC 007)
+metal = ["candle-core/metal"]

@@ -1,4 +1,5 @@
 pub mod composite;
+pub mod gpu_accelerator;
 pub mod hf;
 pub mod manual;
 pub mod ollama;

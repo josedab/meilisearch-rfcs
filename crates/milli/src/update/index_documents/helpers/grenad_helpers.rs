@@ -126,6 +126,85 @@ impl GrenadParameters {
     pub fn max_memory_by_thread(&self) -> Option<usize> {
         self.max_memory.map(|max_memory| (max_memory / rayon::current_num_threads()))
     }
+
+    /// Create optimized GrenadParameters based on available system resources
+    ///
+    /// This implements adaptive parameter selection as described in RFC 007.
+    /// Parameters are automatically tuned based on:
+    /// - Available system memory
+    /// - Number of CPU cores
+    /// - Performance characteristics
+    ///
+    /// # Example
+    /// ```
+    /// use milli::update::index_documents::helpers::GrenadParameters;
+    ///
+    /// let params = GrenadParameters::optimized();
+    /// // Parameters are now tuned for the current system
+    /// ```
+    pub fn optimized() -> Self {
+        let num_cores = rayon::current_num_threads();
+        let available_memory = Self::get_available_memory();
+
+        // Adaptive chunk size based on available memory
+        let chunk_size = if available_memory > 16 * 1024 * 1024 * 1024 {
+            // > 16GB: Use larger chunks (better throughput)
+            128 * 1024 * 1024 // 128MB
+        } else if available_memory > 8 * 1024 * 1024 * 1024 {
+            // 8-16GB: Balanced
+            64 * 1024 * 1024 // 64MB
+        } else {
+            // < 8GB: Smaller chunks (prevent OOM)
+            32 * 1024 * 1024 // 32MB
+        };
+
+        // Use 60% of available memory for grenad operations
+        // This leaves room for other indexing operations
+        let max_memory = (available_memory as f64 * 0.6) as usize;
+
+        Self {
+            chunk_compression_type: CompressionType::Snappy,
+            chunk_compression_level: None,
+            max_memory: Some(max_memory),
+            // Allow 4 chunks per core for better parallelism
+            max_nb_chunks: Some(num_cores * 4),
+            experimental_no_edition_2024_for_prefix_post_processing: false,
+            experimental_no_edition_2024_for_facet_post_processing: false,
+        }
+    }
+
+    /// Get available system memory in bytes
+    fn get_available_memory() -> usize {
+        #[cfg(target_os = "linux")]
+        {
+            use sysinfo::{System, SystemExt};
+            let mut sys = System::new();
+            sys.refresh_memory();
+            sys.available_memory() as usize
+        }
+
+        #[cfg(target_os = "macos")]
+        {
+            use sysinfo::{System, SystemExt};
+            let mut sys = System::new();
+            sys.refresh_memory();
+            sys.available_memory() as usize
+        }
+
+        #[cfg(target_os = "windows")]
+        {
+            use sysinfo::{System, SystemExt};
+            let mut sys = System::new();
+            sys.refresh_memory();
+            sys.available_memory() as usize
+        }
+
+        #[cfg(not(any(target_os = "linux", target_os = "macos", target_os = "windows")))]
+        {
+            // Default to 8GB if platform unknown
+            8 * 1024 * 1024 * 1024
+        }
+    }
 }
 
 /// Returns an iterator that outputs grenad readers of obkv documents

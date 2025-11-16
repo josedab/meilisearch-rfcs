@@ -1,4 +1,5 @@
 pub use self::available_ids::AvailableIds;
+pub use self::batch_optimizer::BatchOptimizer;
 pub use self::chat::ChatSettings;
 pub use self::clear_documents::ClearDocuments;
 pub use self::concurrent_available_ids::ConcurrentAvailableIds;
@@ -14,6 +15,7 @@ pub use self::words_prefix_integer_docids::WordPrefixIntegerDocids;
 pub use self::words_prefixes_fst::WordsPrefixesFst;
 
 mod available_ids;
+pub mod batch_optimizer;
 mod chat;
 mod clear_documents;
 mod concurrent_available_ids;
