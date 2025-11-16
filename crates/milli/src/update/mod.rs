@@ -8,6 +8,10 @@ pub use self::index_documents::{request_threads, *};
 pub use self::indexer_config::{default_thread_pool_and_threads, IndexerConfig, S3SnapshotOptions};
 pub use self::new::ChannelCongestion;
 pub use self::settings::{validate_embedding_settings, Setting, Settings};
+pub use self::streaming::{
+    CrashRecovery, MergeScheduler, MergeStrategy, MemTable, RecoveryStats, WALEntry,
+    WriteAheadLog, WriteBuffer,
+};
 pub use self::update_step::UpdateIndexingStep;
 pub use self::word_prefix_docids::WordPrefixDocids;
 pub use self::words_prefix_integer_docids::WordPrefixIntegerDocids;
@@ -23,6 +27,7 @@ mod index_documents;
 mod indexer_config;
 pub mod new;
 pub(crate) mod settings;
+pub mod streaming;
 mod update_step;
 pub mod upgrade;
 mod word_prefix_docids;
