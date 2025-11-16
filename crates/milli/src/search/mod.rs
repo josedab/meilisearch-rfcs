@@ -26,6 +26,7 @@ static LEVDIST2: Lazy<LevBuilder> = Lazy::new(|| LevBuilder::new(2, true));
 
 pub mod facet;
 mod fst_utils;
+pub mod fusion;
 pub mod hybrid;
 pub mod new;
 pub mod similar;
