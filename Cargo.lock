@@ -4087,6 +4087,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "meilisearch-analytics"
+version = "1.26.0"
+dependencies = [
+ "anyhow",
+ "heed",
+ "rand 0.8.5",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.16",
+ "time",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
 name = "meilisearch-auth"
 version = "1.26.0"
 dependencies = [

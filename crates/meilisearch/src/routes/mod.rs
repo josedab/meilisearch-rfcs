@@ -55,6 +55,7 @@ use crate::Opt;
 const PAGINATION_DEFAULT_LIMIT: usize = 20;
 const PAGINATION_DEFAULT_LIMIT_FN: fn() -> usize = || 20;
 
+mod analytics_routes;
 mod api_key;
 pub mod batches;
 pub mod chats;
@@ -127,7 +128,8 @@ pub fn configure(cfg: &mut web::ServiceConfig) {
         .service(web::scope("/network").configure(network::configure))
         .service(web::scope("/export").configure(export::configure))
         .service(web::scope("/chats").configure(chats::configure))
-        .service(web::scope("/webhooks").configure(webhooks::configure));
+        .service(web::scope("/webhooks").configure(webhooks::configure))
+        .configure(analytics_routes::configure);
 
     #[cfg(feature = "swagger")]
     {

@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
     "crates/meilisearch",
+    "crates/meilisearch-analytics",
     "crates/meilitool",
     "crates/meilisearch-types",
     "crates/meilisearch-auth",
