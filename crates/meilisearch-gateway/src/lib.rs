@@ -1,0 +1,22 @@
+pub mod api;
+pub mod config;
+pub mod error;
+pub mod gateway;
+pub mod health;
+pub mod indexer;
+pub mod merger;
+pub mod pool;
+pub mod replication;
+pub mod router;
+pub mod types;
+
+pub use api::{ClusterApi, ClusterHealthResponse, ClusterNodesResponse, IndexShardsResponse};
+pub use config::{DistributedConfig, ServerMode, ShardingConfig};
+pub use error::{Error, Result};
+pub use gateway::Gateway;
+pub use health::HealthMonitor;
+pub use indexer::DistributedIndexer;
+pub use merger::ResultMerger;
+pub use pool::NodeConnectionPool;
+pub use replication::{ReplicationManager, SyncMode, WriteOperation, WriteOperationType};
+pub use router::QueryRouter;

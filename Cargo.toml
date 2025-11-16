@@ -20,6 +20,8 @@ members = [
     "crates/xtask",
     "crates/build-info",
     "crates/openapi-generator",
+    "crates/meilisearch-coordinator",
+    "crates/meilisearch-gateway",
 ]
 
 [workspace.package]
